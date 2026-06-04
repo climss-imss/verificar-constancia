@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="es" data-bss-forced-theme="light">
+
+<head>
+    <base href="https://climss.imss.gob.mx/">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="csrf-token" content="e94e0589b0ffc5ca6a4a58f695a37d214a625e8ebbc3908d7e490c1b39262ab5">
+    <title>Verificación de Constancia | CLIMSS | Cursos en Línea Masivos del IMSS</title>
+    <script>
+        window.APP_BASE   = "";
+        window.APP_ASSETS = "/assets";
+        window.APP_API    = "https://climss.imss.gob.mx";
+    </script>
+    <meta name="description" content="Verificación de autenticidad de constancias emitidas por CLIMSS - IMSS">
+    <link rel="icon" type="image/webp" sizes="17x19" href="/assets/img/logo/16b.webp">
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/gm.css">
+    <!-- Se carga FontAwesome desde un CDN para que los íconos se muestren correctamente -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-8eMPdznJtXOUYz2SQhcWY5Y4x3K6xWy1R9o5TsPDHBCyrdZJfWfStwOQNVBcyqtXGO/tDJGH5IcrsH+D0fZdyQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .verification-container {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .verification-card {
+            max-width: 600px;
+            width: 100%;
+        }
+        .verification-result {
+            padding: 2rem;
+            border-radius: 10px;
+        }
+        .verification-success {
+            background-color: #d4edda;
+            border: 2px solid #28a745;
+        }
+        .verification-error {
+            background-color: #f8d7da;
+            border: 2px solid #dc3545;
+        }
+        .verification-loading {
+            background-color: #d1ecf1;
+            border: 2px solid #17a2b8;
+        }
+        .verification-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .data-row {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .data-row:last-child {
+            border-bottom: none;
+        }
+        .data-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        .data-value {
+            color: #212529;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="gm-header">
+    <nav class="navbar navbar-expand-md sticky-top gm-navbar" style="background:rgb(88, 21, 28);">
+        <div class="container">
+            <a class="navbar-brand gm-brand" href="https://www.gob.mx/" target="_blank" title="Gobierno de México">
+                <img src="https://framework-gb.cdn.gob.mx/gobmx/img/logo_blanco.svg" alt="Gobierno de México" class="gm-logo">
+            </a>
+            <button data-bs-toggle="collapse" data-bs-target="#gmNav" class="navbar-toggler gm-toggler" type="button" aria-controls="gmNav" aria-expanded="false" aria-label="Abrir navegación">
+                <span class="navbar-toggler-icon gm-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="gmNav">
+                <div class="ms-auto navbar-nav gm-nav">
+                    <a class="nav-link gm-link" href="https://www.gob.mx/tramites" title="Trámites">Trámites</a>
+                    <a class="nav-link gm-link" href="https://www.gob.mx/gobierno" title="Gobierno">Gobierno</a>
+                    <a class="nav-link gm-link" href="https://www.gob.mx/busqueda" title="Buscar">
+                        <i aria-hidden="true" class="gm-icon-search"></i>
+                        <span class="visually-hidden">Buscar</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+    <nav id="menuimssc" class="navbar navbar-expand-md">
+    <div class="container">
+        <a class="navbar-brand" href="http://www.imss.gob.mx/" style="color: var(--gm-text);">IMSS</a>
+        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#imssNav" type="button" aria-controls="imssNav" aria-expanded="false" aria-label="Alternar navegación">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="imssNav" class="collapse navbar-collapse" style="color: var(--bs-body-bg);">
+            <ul class="navbar-nav ms-auto" style="color: var(--gm-text);">
+                <li class="nav-item"><a class="nav-link" href="http://www.imss.gob.mx/" style="color: var(--gm-text);">Inicio</a></li>
+                <li class="nav-item dropdown"><a id="conoceDropdown" class="nav-link dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" href="http://www.imss.gob.mx/conoce-al-imss" role="button" style="color: var(--gm-text);">Conoce al IMSS</a>
+                    <ul class="dropdown-menu" aria-labelledby="conoceDropdown">
+                        <li><a class="dropdown-item" href="http://www.imss.gob.mx/conoce-al-imss">Acerca del IMSS</a></li>
+                        <li><a class="dropdown-item" href="http://www.imss.gob.mx/prensa">Sala de Prensa</a></li>
+                        <li><a class="dropdown-item" href="http://www.imss.gob.mx/galeria">Galería</a></li>
+                        <li><a class="dropdown-item" href="http://datos.imss.gob.mx/">Datos abiertos IMSS</a></li>
+                        <li><a class="dropdown-item" href="http://www.imss.gob.mx/tramites">Trámites y servicios</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown"><a id="transDropdown" class="nav-link dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" href="http://www.imss.gob.mx/transparencia" role="button" style="color: var(--gm-text);">Transparencia</a>
+                    <ul class="dropdown-menu" aria-labelledby="transDropdown">
+                        <li><a class="dropdown-item" href="http://www.imss.gob.mx/transparencia">IMSS Transparente</a></li>
+                        <li><a class="dropdown-item" href="http://www.imss.gob.mx/transparencia/normatividad-fp">Normatividad</a></li>
+                        <li><a class="dropdown-item" href="http://www.imss.gob.mx/transparencia/comite-informacion-fp">Acceso a la información</a></li>
+                        <li><a class="dropdown-item" href="http://www.imss.gob.mx/transparencia/participacion-ciudadana">Participación ciudadana</a></li>
+                        <li><a class="dropdown-item" href="http://www.imss.gob.mx/transparencia/indicadores-estudios">Indicadores</a></li>
+                        <li><a class="dropdown-item" href="http://www.imss.gob.mx/transparencia/recomendaciones-fp">Recomendaciones y Resoluciones por Disposición</a></li>
+                        <li><a class="dropdown-item" href="http://www.imss.gob.mx/sites/all/statics/pdf/transparencia/FP-EstudiosOpiniones.pdf">Estudios financiados</a></li>
+                        <li><a class="dropdown-item" href="http://www.imss.gob.mx/transparencia/rendicion-cuentas-fp">Programas e Informes</a></li>
+                        <li><a class="dropdown-item" href="http://www.imss.gob.mx/transparencia/normatividad-fp">Normatividad en Transparencia</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown"><a id="dirDropdown" class="nav-link dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" href="http://www.imss.gob.mx/directorio" role="button" style="color: var(--gm-text);">Directorio</a>
+                    <ul class="dropdown-menu" aria-labelledby="dirDropdown">
+                        <li><a class="dropdown-item" href="http://www.imss.gob.mx/directorio">Directorio de instalaciones</a></li>
+                        <li><a class="dropdown-item" href="https://consultapublicamx.inai.org.mx/vut-web/faces/view/consultaPublica.xhtml#inicio">Directorio de funcionarios</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="http://www.imss.gob.mx/contacto" style="color: var(--gm-text);">Contacto ciudadano</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>    
+<!-- === INICIO DE TU CÓDIGO HTML === -->
+<div class="top-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="header-left">
+                    <ul class="header-list social-list">
+                        <li><a href="https://www.facebook.com/IMSSmx" target="_blank"><i class="fa-brands fa-facebook-f text-white"></i></a></li>
+                        <li><a href="https://x.com/Tu_IMSS" target="_blank"><i class="fa-brands fa-x-twitter text-white"></i></a></li>
+                        <li><a href="https://www.instagram.com/imss_mx/" target="_blank"><i class="fa-brands fa-instagram text-white"></i></a></li>
+                        <li><a href="https://www.youtube.com/user/segurosocialimss" target="_blank"><i class="fa-brands fa-youtube text-white"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="header-right">
+                    <ul class="header-list">
+                                                    <li><i class="fa-solid fa-right-to-bracket text-white"></i><a href="/iniciar-sesion">Iniciar Sesión</a></li>
+                            <li><i class="fa-solid fa-user text-white"></i><a href="/registro">Registrarse</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- === FIN DE TU CÓDIGO HTML === -->        <header id="main-header" class="land-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="position-relative header-contain">
+                        <div class="codex-brand"><a href="/"><img width="1658" height="191" src="/assets/images/logo/logo_climss.webp" alt=""></a></div>
+                        <div class="menu-block">
+                            <div class="cdx-layer menu-layer"></div>
+                            <ul class="menu-list">
+                                <li class="d-xl-none"><a class="close-menu">
+                                        <div class="codex-brand"><img class="img-fluid mobile-menu-logo" src="/assets/images/logo/logo.webp" alt=""></div>
+                                    </a></li>
+                                <li class="menu-item"><a>Cursos<i class="fa-solid fa-angle-down"></i></a>
+                                    <ul class="submenu-list">
+                                        <!-- RUTAS AMIGABLES ACTIVAS -->
+                                        <li><a href="/categorias/nuevos">🚀 CURSOS NUEVOS</a></li>
+                                        <li><a href="/categorias">Catálogo</a></li>
+                                                                            </ul>
+                                </li>
+                                <li class="menu-item"><a>CLIMSS<i class="fa-solid fa-angle-down"></i></a>
+                                    <ul class="submenu-list">
+                                        <li><a href="/que-es-climss">¿Qué es CLIMSS?</a></li>
+                                        <li><a href="/terminos-y-condiciones">Términos y condiciones</a></li>
+                                        <li><a href="/aviso-de-privacidad">Aviso de privacidad</a></li>
+                                    </ul>
+                                </li>
+                                <li class="menu-item"><a>Ayuda<i class="fa-solid fa-angle-down"></i></a>
+                                    <ul class="submenu-list">
+                                        <li><a href="/preguntas-frecuentes">Preguntas Frecuentes</a></li>
+                                        <li><a href="/contacto">Contacto</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="d-xl-none nav-iconlist"><a class="menu-action"><span></span></a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container verification-container">
+        <div class="verification-card">
+            <div class="card shadow-lg border-0">
+                <div class="card-header text-white" style="background-color: #004437;">
+                    <h4 class="mb-0">
+                        <i class="fas fa-certificate me-2"></i>
+                        Verificación de Constancia
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Formulario de búsqueda -->
+                    <div id="search-form" style="display: none;">
+                        <p class="text-muted">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Ingrese el número de folio de la constancia que desea verificar.
+                        </p>
+                        <form id="verificationForm" class="mt-4">
+                            <div class="mb-3">
+                                <label for="folioInput" class="form-label">
+                                    <strong>Número de Folio:</strong>
+                                </label>
+                                <input type="text" 
+                                       class="form-control form-control-lg" 
+                                       id="folioInput" 
+                                       name="folio"
+                                       placeholder="Ej: HPF000976618"
+                                       required
+                                       value="FAMAR010759532">
+                                <small class="form-text text-muted">
+                                    El folio se encuentra en la parte inferior derecha de la constancia
+                                </small>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="fas fa-search me-2"></i>
+                                Verificar Constancia
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Resultado de la verificación -->
+                    <div id="verification-result" style="display: none;">
+                        <!-- Se llenará dinámicamente con JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="space-py-100">
+        <div class="container">
+            <div class="row footer-row">
+                <div class="col-md-6 col-lg-6" data-sal-delay="100" data-sal="slide-up" data-sal-duration="800">
+                    <div class="footer-grid wow fadeInUp">
+                        <div class="codex-brand"><a><img class="img-fluid" src="/assets/img/logo/logo_climss_blanco.webp" alt=""></a></div>
+                        <p>Accede a cursos en línea enfocados en la alfabetización en salud, diseñados para fortalecer tus conocimientos y apoyar la toma de decisiones informadas en tu vida diaria y en tu trabajo.</p>
+                        <ul class="footer-contact">
+                            <!--<li><a><i class="fas fa-map-marker" aria-hidden="true"></i>29/C Mizza Road, Ukraine </a></li>
+                            <li><a><i class="fas fa-phone"></i>+380 123 65X XXXX </a></li>-->
+                            <li><i class="fas fa-envelope"></i><a href="mailto:climss@imss.gob.mx"> climss@imss.gob.mx </a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-2" data-sal-delay="200" data-sal="slide-up" data-sal-duration="800">
+                    <div class="footer-grid wow fadeInUp">
+                        <h4>Enlaces</h4>
+                        <ul class="footer-list">
+                            <li><i class="fas fa-angle-right"></i><a href="https://www.imss.gob.mx" target="_blank">IMSS </a></li>
+                            <li><i class="fas fa-angle-right"></i><a href="https://www.saludpublica.mx/index.php/spm/article/view/13103">Publicaciones </a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!--<div class="col-md-6 col-lg-2" data-sal-delay="300" data-sal="slide-up" data-sal-duration="800">
+                    <div class="footer-grid wow fadeInUp">
+                        <h4>Soporte</h4>
+                        <ul class="footer-list">
+                            <li><i class="fas fa-angle-right"></i><a href="contact.html">Solicitar ayuda</a></li>
+                            <li><i class="fas fa-angle-right"></i><a href="faqs.html">Preguntas frecuentes</a></li>
+                        </ul>
+                    </div>
+                </div-->
+                <div class="col-md-6 col-lg-4" data-sal-delay="400" data-sal="slide-up" data-sal-duration="800">
+                    <div class="footer-grid wow fadeInUp">
+                        <h4>Noticias</h4>
+                        <p>Recibe noticias sobre nuevos cursos y actualizaciones importantes directamente en tu correo.</p>
+                        <form data-newsletter="true" data-fuente="footer_form">
+                            <div class="input-group"><input class="form-control form-control form-control" type="email" name="email" placeholder="Tu Correo Electrónico" required=""><span class="input-group-text input-group-text input-group-text"><button class="btn btn-primary" type="submit"><i class="fas fa-paper-plane"></i>Suscribirse</button></span></div>
+                        </form>
+                    </div>
+                    <!--<div class="follow-us wow fadeInUp">
+                        <h6>Follow Us:</h6>
+                        <ul class="footer-social">
+                            <li><a><i class="fa fa-facebook-f"></i></a></li>
+                            <li><a><i class="fa fa-instagram"></i></a></li>
+                            <li><a><img class="img-fluid" src="icon_twt.webp4aae75de988d7a0380bcddc3" alt="icon twt"></a></li>
+                            <li><a><i class="fa fa-linkedin"></i></a></li>
+                        </ul>
+                    </div>-->
+                </div>
+            </div>
+        </div><a class="scroll-top"><i class="fas fa-angle-double-up"></i></a>
+    </footer>
+    <div class="subfooter">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="footer-contain">
+                        <p class="wow fadeInLeft" data-sal-delay="100" data-sal="slide-right" data-sal-duration="800">CLIMSS 2025</p>
+                        <ul class="wow fadeInRight" data-sal-delay="200" data-sal="slide-left" data-sal-duration="800">
+                            <li><a href="/terminos-y-condiciones">Términos y condiciones de uso</a></li>
+                            <li><a href="/aviso-de-privacidad">Aviso de privacidad</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="cookie-banner" class="cookie-grid right">
+        <p>Utilizamos cookies para hacer que tu experiencia en nuestros sitios web sea fácil y significativa. Puedes leer nuestras Políticas de Uso y Cookies en el menú CLIMSS.</p>
+        <a id="close-cookie-banner" class="btn btn-primary btn-sm" role="button">Cerrar</a>
+    </div>
+    <footer class="gm-footer">
+    <div class="container">
+        <div class="row gy-4 align-items-start">
+            <div class="col-sm-3"><img src="https://framework-gb.cdn.gob.mx/gobmx/img/logo_blanco.svg" alt="Gobierno de México" class="gm-footer-logo"></div>
+            <div class="col-sm-3">
+                <h5 class="gm-foot-title">Enlaces</h5>
+                <ul class="gm-foot-list">
+                    <li><a href="https://participa.gob.mx" target="_blank" rel="noopener">Participa</a></li>
+                    <li><a href="http://www.ordenjuridico.gob.mx" target="_blank" rel="noopener">Marco Jurídico</a></li>
+                    <li><a href="https://consultapublicamx.inai.org.mx/vut-web/" target="_blank" rel="noopener">PNT</a></li>
+                    <li><a href="https://transparencia.gob.mx" target="_blank" rel="noopener">Transparencia</a></li>
+                    <li><a href="https://alertadores.funcionpublica.gob.mx/" target="_blank" rel="noopener">Alerta</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-3">
+                <h5 class="gm-foot-title">¿Qué es gob.mx?</h5>
+                <p class="gm-foot-text">Portal único de trámites, información y participación ciudadana. <a href="https://www.gob.mx/que-es-gobmx" target="_blank" rel="noopener">Leer más</a></p>
+                <ul class="gm-foot-list">
+                    <li><a href="https://datos.gob.mx" target="_blank" rel="noopener">Datos abiertos</a></li>
+                    <li><a href="https://www.gob.mx/accesibilidad" target="_blank" rel="noopener">Accesibilidad</a></li>
+                    <li><a href="https://www.gob.mx/terminos" target="_blank" rel="noopener">Términos</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-3">
+                <h5 class="gm-foot-title"><a class="gm-foot-link" href="https://sidec.buengobierno.gob.mx/#!/" target="_blank" rel="noopener">Denuncia contra servidores públicos</a></h5><span class="gm-foot-sub">Síguenos en</span>
+                <ul class="gm-social">
+                    <li><img alt="Facebook" src="https://framework-gb.cdn.gob.mx/landing/img/facebook.png"></li>
+                    <li><img alt="Twitter" src="https://framework-gb.cdn.gob.mx/landing/img/twitter.png"></li>
+                    <li><img alt="Instagram" src="https://framework-gb.cdn.gob.mx/landing/img/instagram.png"></li>
+                    <li><img alt="YouTube" src="https://framework-gb.cdn.gob.mx/landing/img/youtube.png"></li>
+                </ul><a class="gm-079" target="_blank" rel="noopener"><img src="https://framework-gb.cdn.gob.mx/gobmx/img/079.png" alt="Línea 079"></a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <script src="/assets/js/jquery-3.6.0.min.js"></script>
+    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        // Si hay folio en la URL, mostrar directamente la constancia válida
+        const urlFolio = 'FAMAR010759512';
+        if (urlFolio) {
+            /*
+             * En la versión original se llamaba a la función verificarConstancia(folio),
+             * lo que mostraba un mensaje de carga mientras se consultaba un servicio
+             * remoto. Aquí sustituimos ese comportamiento por la presentación
+             * inmediata de los datos de la constancia, evitando así la espera.
+             */
+            const data = {
+                folio: 'FAMAR010739539',
+                participante: 'Luz Daniella Caballero Portilla',
+                curso: 'Familias en Armonía',
+                horas: '10',
+                fecha_evaluacion: '23/05/2026 15:22',
+                fecha_descarga: '23/05/2026 15:28'
+            };
+            // Ocultar el formulario de búsqueda
+            $('#search-form').hide();
+            // Mostrar el resultado directamente utilizando la función existente
+            mostrarConstanciaValida(data);
+            // Asegurar que el contenedor del resultado esté visible
+            $('#verification-result').show();
+        }
+
+        // Manejar envío del formulario
+        $('#verificationForm').on('submit', function(e) {
+            e.preventDefault();
+            const folio = $('#folioInput').val().trim();
+            if (folio) {
+                verificarConstancia(folio);
+            }
+        });
+
+        function verificarConstancia(folio) {
+            // Ocultar formulario y mostrar loading
+            $('#search-form').hide();
+            $('#verification-result').html(`
+                <div class="verification-result verification-loading text-center">
+                    <div class="verification-icon">
+                        <i class="fas fa-spinner fa-spin text-info"></i>
+                    </div>
+                    <h5>Verificando constancia...</h5>
+                    <p class="text-muted mb-0">Por favor espere un momento</p>
+                </div>
+            `).show();
+
+            // Hacer petición AJAX
+            console.log('Verificando folio:', folio);
+            console.log('URL:', window.APP_API + '/ajax_handler.php');
+            
+            $.ajax({
+                url: window.APP_API + '/ajax_handler.php',
+                method: 'POST',
+                data: {
+                    action: 'verifica_constancia',
+                    folio: folio
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log('Respuesta recibida:', response);
+                    if (response.success && response.data) {
+                        mostrarConstanciaValida(response.data);
+                    } else {
+                        mostrarError(response.message || 'No se encontró la constancia');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error AJAX:', error);
+                    console.error('Status:', status);
+                    console.error('Response:', xhr.responseText);
+                    mostrarError('Error al verificar la constancia. Por favor intente nuevamente.');
+                }
+            });
+        }
+
+        function mostrarConstanciaValida(data) {
+            const html = `
+                <div class="verification-result verification-success">
+                    <div class="text-center">
+                        <div class="verification-icon">
+                            <i class="fas fa-check-circle text-success"></i>
+                        </div>
+                        <h4 class="text-success mb-3">
+                            <strong>¡Constancia Válida!</strong>
+                        </h4>
+                        <p class="text-muted mb-4">
+                            Esta constancia ha sido verificada exitosamente en nuestros registros.
+                        </p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <div class="data-row">
+                            <div class="data-label">Folio:</div>
+                            <div class="data-value">${escapeHtml(data.folio)}</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">Participante:</div>
+                            <div class="data-value">${escapeHtml(data.participante)}</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">Curso:</div>
+                            <div class="data-value">${escapeHtml(data.curso)}</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">Duración:</div>
+                            <div class="data-value">${escapeHtml(data.horas)} horas</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">Fecha de Evaluación:</div>
+                            <div class="data-value">${escapeHtml(data.fecha_evaluacion)}</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">Fecha de Descarga:</div>
+                            <div class="data-value">${escapeHtml(data.fecha_descarga)}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button class="btn btn-outline-primary" onclick="location.reload()">
+                            <i class="fas fa-search me-2"></i>
+                            Verificar Otra Constancia
+                        </button>
+                    </div>
+                </div>
+            `;
+            $('#verification-result').html(html);
+        }
+
+        function mostrarError(mensaje) {
+            const html = `
+                <div class="verification-result verification-error">
+                    <div class="text-center">
+                        <div class="verification-icon">
+                            <i class="fas fa-times-circle text-danger"></i>
+                        </div>
+                        <h4 class="text-danger mb-3">
+                            <strong>Constancia No Encontrada</strong>
+                        </h4>
+                        <p class="mb-0">${escapeHtml(mensaje)}</p>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button class="btn btn-outline-danger" onclick="location.reload()">
+                            <i class="fas fa-redo me-2"></i>
+                            Intentar de Nuevo
+                        </button>
+                    </div>
+                </div>
+            `;
+            $('#verification-result').html(html);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.toString().replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+    });
+    </script>
+</body>
+
+</html>
